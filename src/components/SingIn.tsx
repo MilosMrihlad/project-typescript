@@ -14,7 +14,6 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from 'src/firebase';
-import { SignUp } from './Register';
 
 export default function SignIn() {
     const theme = createTheme();
