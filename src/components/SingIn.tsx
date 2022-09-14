@@ -27,7 +27,7 @@ export default function SignIn() {
                 // Signed in
                 const user = userCredential.user;
                 console.log(user);
-                // ...
+                setError(false);
             })
             .catch(() => {
                 setError(true);
