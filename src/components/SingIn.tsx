@@ -13,31 +13,61 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { FirebaseError } from '@firebase/util';
 import { auth } from 'src/firebase';
+
+type ErrorCode = 'auth/wrong-password' | 'auth/invalid-email' | undefined;
 
 export default function SignIn() {
     const theme = createTheme();
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [error, setError] = useState(false);
+    const [error, setError] = useState<ErrorCode>();
 
     function handleLogin() {
-        if (email.length || password.length) {
+        const trimetEmail = email.trim();
+        const trimetPassword = password.trim();
+
+        if (trimetEmail.length || trimetPassword.length) {
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     // Signed in
                     const user = userCredential.user;
                     console.log(user);
-                    setError(false);
+                    setError(undefined);
                 })
-                .catch(() => {
-                    setError(true);
+                .catch((e) => {
+                    console.log(e.code);
+                    const firebaseError = e as FirebaseError;
+                    const errorMessage = firebaseError.code as ErrorCode;
+                    setError(errorMessage);
                 });
+        }
+    }
+    /*
+    async function handleLogin2() {
+        const trimetEmail = email.trim();
+        const trimetPassword = password.trim();
+
+        if (trimetEmail.length || trimetPassword.length) {
+            try {
+                const userCredential = await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+                // Signed in
+                const user = userCredential.user;
+                console.log(user);
+                setError(false);
+            } catch (e) {
+                setError(true);
+            }
         } else {
             setError(true);
         }
     }
-
+*/
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -58,6 +88,12 @@ export default function SignIn() {
                     </Typography>
                     <Box component="form" noValidate sx={{ mt: 1 }}>
                         <TextField
+                            error={error === 'auth/invalid-email'}
+                            helperText={
+                                error === 'auth/invalid-email'
+                                    ? 'Zadal jste špatný email !'
+                                    : null
+                            }
                             margin="normal"
                             required
                             fullWidth
@@ -69,6 +105,12 @@ export default function SignIn() {
                             onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextField
+                            error={error === 'auth/wrong-password'}
+                            helperText={
+                                error === 'auth/wrong-password'
+                                    ? 'Zadal jste špatné heslo !'
+                                    : null
+                            }
                             margin="normal"
                             required
                             fullWidth

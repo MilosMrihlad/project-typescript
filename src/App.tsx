@@ -1,14 +1,20 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
 import SignUp from './components/Register';
 import SignIn from './components/SingIn';
 
+
 const App: React.FC = () => {
     return (
-        <Router>
-            <SignIn />
-            <Route path={'/registrace'} element={SignUp()} />
-        </Router>
+        <BrowserRouter>
+            <Link to={'/prihlaseni'}>
+                <button>Příhlásit se</button>
+            </Link>
+            <Routes>
+                <Route path={'/prihlaseni'} element={<SignIn />} />
+                <Route path={'/registrace'} element={<SignUp />} />
+            </Routes>
+        </BrowserRouter>
     );
 };
 
