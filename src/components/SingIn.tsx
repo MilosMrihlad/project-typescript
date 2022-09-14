@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -14,6 +14,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from 'src/firebase';
+import { SignUp } from './Register';
 
 export default function SignIn() {
     const theme = createTheme();
@@ -22,16 +23,20 @@ export default function SignIn() {
     const [error, setError] = useState(false);
 
     function handleLogin() {
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // Signed in
-                const user = userCredential.user;
-                console.log(user);
-                setError(false);
-            })
-            .catch(() => {
-                setError(true);
-            });
+        if (email.length || password.length) {
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in
+                    const user = userCredential.user;
+                    console.log(user);
+                    setError(false);
+                })
+                .catch(() => {
+                    setError(true);
+                });
+        } else {
+            setError(true);
+        }
     }
 
     return (
@@ -91,12 +96,12 @@ export default function SignIn() {
                         </Button>
                         <Grid container>
                             <Grid item xs>
-                                <Link href="#" variant="body2">
+                                <Link to="zapomenute-heslo">
                                     Zapomenuté heslo?
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <Link href="#" variant="body2">
+                                <Link to="/registrace">
                                     {'Ještě nemáš registraci ? Registrovat se'}
                                 </Link>
                             </Grid>
