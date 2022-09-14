@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -15,35 +14,27 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
-
-const theme = createTheme();
-const auth = getAuth();
-const [loginEmail, setLoginEmail] = useState<string>('');
-const [loginPassword, setLoginPassword] = useState<number>();
-
-
 export default function SignIn() {
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-    };
+    const theme = createTheme();
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [error, setError] = useState(false);
 
-signInWithEmailAndPassword(_auth, _email, _password){
-        .then((userCredential: { user: any; }) => {
-            // Signed in
-            const user = userCredential.user;
-            // ...
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-        });
+    function handleLogin(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        const auth = getAuth();
+        e.preventDefault();
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                console.log(user);
+                // ...
+            })
+            .catch((error) => {
+                setError(true);
+            });
     }
-    
+
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -62,12 +53,7 @@ signInWithEmailAndPassword(_auth, _email, _password){
                     <Typography component="h1" variant="h5">
                         Příhlášení
                     </Typography>
-                    <Box
-                        component="form"
-                        onSubmit={handleSubmit}
-                        noValidate
-                        sx={{ mt: 1 }}
-                    >
+                    <Box component="form" noValidate sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"
                             required
@@ -77,6 +63,7 @@ signInWithEmailAndPassword(_auth, _email, _password){
                             name="email"
                             autoComplete="email"
                             autoFocus
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextField
                             margin="normal"
@@ -87,6 +74,7 @@ signInWithEmailAndPassword(_auth, _email, _password){
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                         <FormControlLabel
                             control={
@@ -99,6 +87,7 @@ signInWithEmailAndPassword(_auth, _email, _password){
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
+                            onClick={(e) => handleLogin(e)}
                         >
                             Příhlásit
                         </Button>
@@ -112,6 +101,11 @@ signInWithEmailAndPassword(_auth, _email, _password){
                                 <Link href="#" variant="body2">
                                     {'Ještě nemáš registraci ? Registrovat se'}
                                 </Link>
+                                {error && (
+                                    <span>
+                                        Zadal jsi špatně email nebo heslo !
+                                    </span>
+                                )}
                             </Grid>
                         </Grid>
                     </Box>
