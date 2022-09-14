@@ -12,7 +12,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from 'src/firebase';
 
 export default function SignIn() {
     const theme = createTheme();
@@ -20,9 +21,7 @@ export default function SignIn() {
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState(false);
 
-    function handleLogin(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-        const auth = getAuth();
-        e.preventDefault();
+    function handleLogin() {
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in
@@ -30,7 +29,7 @@ export default function SignIn() {
                 console.log(user);
                 // ...
             })
-            .catch((error) => {
+            .catch(() => {
                 setError(true);
             });
     }
@@ -83,11 +82,10 @@ export default function SignIn() {
                             label="Zapamatuj si mě"
                         />
                         <Button
-                            type="submit"
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
-                            onClick={(e) => handleLogin(e)}
+                            onClick={handleLogin}
                         >
                             Příhlásit
                         </Button>
@@ -101,12 +99,10 @@ export default function SignIn() {
                                 <Link href="#" variant="body2">
                                     {'Ještě nemáš registraci ? Registrovat se'}
                                 </Link>
-                                {error && (
-                                    <span>
-                                        Zadal jsi špatně email nebo heslo !
-                                    </span>
-                                )}
                             </Grid>
+                            {error && (
+                                <span>Zadal jsi špatně email nebo heslo !</span>
+                            )}
                         </Grid>
                     </Box>
                 </Box>
